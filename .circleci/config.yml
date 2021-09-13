@@ -34,13 +34,13 @@ commands:
     description: Revert the latest migration
     steps:
       - run:
-          name: Get the public DNS of EC2 instance from https://memstash.io/
+          name: Get the public ip of EC2 instance from https://memstash.io/
           command: |
-            PUBLIC_DNS=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_ip)
-            echo ${PUBLIC_DNS}
+            PUBLIC_IP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_ip)
+            echo ${PUBLIC_IP}
             cd .circleci/ansible/
             echo "[all]" > ./inventory
-            echo ${PUBLIC_DNS} >> ./inventory
+            echo ${PUBLIC_IP} >> ./inventory
             cat ./inventory
           when: on_fail
       - add_ssh_keys:
@@ -216,10 +216,12 @@ jobs:
             apk add --no-cache openssh-client
             pip3 install awscli
       - run:
-          name: Get the public DNS of EC2 instance from https://memstash.io/
+          name: Get the IP of EC2 instance 
           command: |
-            PUBLIC_IP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_ip)
+            PUBLIC_IP=$(aws ec2 describe-instances --region ${AWS_DEFAULT_REGION} --filters "Name=tag:Name,Values=backend*" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             echo ${PUBLIC_IP}
+            PUBLIC_ip=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_ip)
+            echo ${PUBLIC_ip}
             cd .circleci/ansible/
             echo "[all]" > ./inventory
             echo ${PUBLIC_IP} >> ./inventory
