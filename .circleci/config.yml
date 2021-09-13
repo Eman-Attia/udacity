@@ -216,12 +216,6 @@ jobs:
             echo "[all]" > ./inventory
             echo ${PUBLIC_IP} >> ./inventory
             cat ./inventory
-            
-            curl -H "Content-Type: text/plain" \
-               -H "token: ${CIRCLE_WORKFLOW_ID}" \
-               --request PUT \
-               --data ${PUBLIC_IP} \
-               https://api.memstash.io/values/public_ip
          
       - add_ssh_keys:
           fingerprints: ["58:1f:66:92:78:4e:4b:c5:bd:c9:52:38:f7:c4:8a:17"] 
