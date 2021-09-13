@@ -4,14 +4,18 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      # Add parameter here   
+      workflow_id:
+        type: string   
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
-            # Your code here
-            exit 1
+            echo "Destroying environment: <<parameters.workflow_id>> "
+            aws cloudformation delete-stack --stack-name udapeople-backend-prod-<<parameters.workflow_id>>
+            aws s3 rm s3://udapeople-prod-<<parameters.workflow_id>> --recursive
+            aws cloudformation delete-stack --stack-name udapeople-frontend-prod-<<parameters.workflow_id>>
+            
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -41,10 +45,15 @@ jobs:
       - restore_cache:
           keys: [frontend-build]
       - run:
-          name: Build front-end
+          name: Install dependencies
           command: |
-            # Your code here
-            exit 1
+            cd frontend
+            npm install
+      - run:
+          name: Compile the code
+          command: |
+            cd frontend
+            npm run build
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -57,10 +66,15 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: Back-end build
+          name: Install dependencies
           command: |
-             # Your code here
-             exit 1
+            cd backend
+            npm install
+      - run:
+          name: Compile the code
+          command: |
+            cd backend
+            npm run build
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
