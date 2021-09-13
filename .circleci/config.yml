@@ -190,9 +190,11 @@ jobs:
             cd .circleci/ansible/
             echo ${BACKEND_AWS_PUBLIC_IP} >> ./inventory
             cat ./inventory
-            cd .circleci/outputs
-            echo "http://$BACKEND_AWS_PUBLIC_IP:3030" >> ./backend_url.txt
-            cat .circleci/outputs/backend_url.txt
+            curl -H "Content-Type: text/plain" \
+            -H "token: ${CIRCLE_WORKFLOW_ID}" \
+            --request PUT \
+            --data ${BACKEND_AWS_PUBLIC_IP} \
+            https://api.memstash.io/values/public_dns
           
       - persist_to_workspace:
           root: ~/
@@ -216,7 +218,7 @@ workflows:
       - scan-frontend:
           requires: [build-frontend]
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          #requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [test-feature-branch]
