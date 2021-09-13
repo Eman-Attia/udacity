@@ -30,7 +30,7 @@ commands:
           when: on_fail
 
 
- revert-migration:
+  revert-migration:
     description: Revert the latest migration
     steps:
       - run:
