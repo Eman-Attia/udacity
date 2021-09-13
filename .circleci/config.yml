@@ -177,6 +177,9 @@ jobs:
               --filters "Name=tag:Name,Values=backend*" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
+            cd .circleci/ansible/
+            echo ${BACKEND_AWS_PUBLIC_IP} >> ./inventory
+            cat ./inventory
             echo "http://$BACKEND_AWS_PUBLIC_IP:3030" >> .circleci/outputs/backend_url.txt
             cat .circleci/outputs/backend_url.txt
           
@@ -203,7 +206,7 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
-      - deploy-infrastructure:
+      - deploy-infrastucture:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
