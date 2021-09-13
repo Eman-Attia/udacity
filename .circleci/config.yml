@@ -50,7 +50,7 @@ commands:
           command: |
             printenv >> ./backend/.env
             cd .circleci/ansible/
-            ansible-playbook -i ./inventory db_rollback.yml
+            ansible-playbook -i ./inventory rollback.yml
           when: on_fail
 
             
@@ -227,7 +227,7 @@ jobs:
             echo ${PUBLIC_IP} >> ./inventory
             cat ./inventory
       - add_ssh_keys:
-          fingerprints: ["f8:a4:ad:7c:d1:11:c1:a4:ac:a2:ca:94:f7:0e:ae:43"] 
+          fingerprints: ["58:1f:66:92:78:4e:4b:c5:bd:c9:52:38:f7:c4:8a:17"] 
       - run:
           name: Configure server via ansible to deploy the backend
           command: |
@@ -252,7 +252,7 @@ jobs:
       - run:
           name: Build the frontend
           command: |
-            PUBLIC_IP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_ip)
+            PUBLIC_IP=$(aws ec2 describe-instances --region ${AWS_DEFAULT_REGION} --filters "Name=tag:Name,Values=backend*" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             echo ${PUBLIC_IP}
             export API_URL="http://${PUBLIC_IP}:3030"
             echo API_URL=${API_URL}
