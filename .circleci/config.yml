@@ -97,7 +97,7 @@ jobs:
           
   test-backend:
     docker:
-      - image: << pipeline.parameters.circleci_image >>
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - run:
