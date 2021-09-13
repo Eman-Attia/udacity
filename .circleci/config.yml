@@ -116,30 +116,34 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+    steps:
+      - checkout
       - run:
           name: Install dependencies
           command: |
             cd backend
             npm install
-      - run: 
+      - run:
           name: Analyze the code
           command: |
-            npm audit --audit-level=critical 
+            cd backend
+            npm audit fix --audit-level=critical --force
 
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
-    steps:
+     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
             cd frontend
             npm install
-      - run: 
+      - run:
           name: Analyze the code
           command: |
-            npm audit --audit-level=critical 
+            cd frontend
+            npm audit fix --audit-level=critical --force
 
    
             
