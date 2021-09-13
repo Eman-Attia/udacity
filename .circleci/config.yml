@@ -150,7 +150,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-        - run:
+      - run:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
