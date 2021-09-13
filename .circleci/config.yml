@@ -191,15 +191,7 @@ jobs:
               --filters "Name=tag:Name,Values=backend*" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            cd .circleci/ansible/
-            echo ${BACKEND_AWS_PUBLIC_IP} >> ./inventory
-            cat ./inventory
-            curl -H "Content-Type: text/plain" \
-            -H "token: ${CIRCLE_WORKFLOW_ID}" \
-            --request PUT \
-            --data ${BACKEND_AWS_PUBLIC_IP} \
-            https://api.memstash.io/values/public_ip
-          
+            echo ${BACKEND_AWS_PUBLIC_IP}        
       - destroy-environment
       
   deploy-backend:
@@ -220,12 +212,19 @@ jobs:
           command: |
             PUBLIC_IP=$(aws ec2 describe-instances --region ${AWS_DEFAULT_REGION} --filters "Name=tag:Name,Values=backend*" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             echo ${PUBLIC_IP}
-            PUBLIC_ip=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_ip)
-            echo ${PUBLIC_ip}
             cd .circleci/ansible/
             echo "[all]" > ./inventory
             echo ${PUBLIC_IP} >> ./inventory
             cat ./inventory
+            
+            curl -H "Content-Type: text/plain" \
+            -H "token: ${CIRCLE_WORKFLOW_ID}" \
+            --request PUT \
+            --data ${BACKEND_AWS_PUBLIC_IP} \
+            https://api.memstash.io/values/public_ip
+            PUBLIC_ip=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_ip)
+            echo ${PUBLIC_ip}
+         
       - add_ssh_keys:
           fingerprints: ["58:1f:66:92:78:4e:4b:c5:bd:c9:52:38:f7:c4:8a:17"] 
       - run:
