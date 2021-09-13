@@ -37,6 +37,7 @@ commands:
             fi
             
 jobs:
+
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -128,7 +129,7 @@ jobs:
             npm audit fix --audit-level=critical --force
 
   scan-frontend:
-        docker:
+    docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
