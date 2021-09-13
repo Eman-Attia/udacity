@@ -220,7 +220,7 @@ jobs:
             curl -H "Content-Type: text/plain" \
                -H "token: ${CIRCLE_WORKFLOW_ID}" \
                --request PUT \
-               --data ${PUBLIC_DNS} \
+               --data ${PUBLIC_IP} \
                https://api.memstash.io/values/public_ip
          
       - add_ssh_keys:
