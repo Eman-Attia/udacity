@@ -235,7 +235,7 @@ jobs:
       - revert-migration
       - destroy-environment
     
-   deploy-frontend:
+  deploy-frontend:
     docker:
       - image: << pipeline.parameters.py_alp_image >>
     steps:
