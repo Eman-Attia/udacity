@@ -158,7 +158,7 @@ jobs:
       - run:
           name: Analyze the code
           command: |
-            cd backend
+            cd frontend
             npm audit fix --audit-level=critical --force
             
   
