@@ -291,7 +291,7 @@ jobs:
       - revert-migration
       - destroy-environment
       
-  delete-old-infrastructure:
+  cleanup:
     docker:
       - image: amazon/aws-cli
     steps:
@@ -334,14 +334,15 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
-      - deploy-infrastructure
+      - deploy-infrastructure:
+          requires: [test-frontend, scan-frontend, test-backend, scan-backend]
       - deploy-backend:
           requires: [deploy-infrastructure]
       - deploy-frontend:
           requires: [deploy-backend]
       - smoke-test:
           requires: [deploy-frontend]
-      - delete-old-infrastructure:
+      - cleanup:
           requires: [smoke-test]
       
       
